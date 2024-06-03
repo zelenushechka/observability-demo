@@ -1,14 +1,22 @@
 # observability-demo
-Datadog deployment guide for EKS cluster
+Datadog deployment guide for EKS cluster on AWS cloud
 
-step-by-step guide to achieve infrastructure with datadog from scratch
- Amazon EKS. Create cluster, you can use everything default. Create node group, you can leave default settings
-login to you cluster: aws eks --profile reply_aws (specify profile) --region eu-central-1 update-kubeconfig --name datadog (your cluster name)
+Prerequinments:
+- Docker
+- Helm
+- Kubectl
+
+Create trial account at https://www.datadoghq.com/. It can be used for 14 days.
+
+Create cluster, you can leave everything by default. Create node group, you can leave default settings
+
+Login to you cluster: 
+aws eks --profile reply_aws --region eu-central-1 update-kubeconfig --name datadog #make sure you are using your own region, profile and cluster name
 
 helm repo add datadog https://helm.datadoghq.com
 helm install datadog-operator datadog/datadog-operator
 kubectl create secret generic datadog-secret --from-literal api-key=***(use your own api-key)
-create file datadog-agent.yaml with content: 
+create file datadog-agent.yaml with content:
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
@@ -26,6 +34,7 @@ apply: kubectl apply -f datadog-agent.yaml
 ￼
 ￼
 Let’s create simple pod to load CPU
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -41,10 +50,10 @@ spec:
     - "while true; do :; done"
   restartPolicy: Never
 ￼
-
+check metrics in datadog
 ￼
 create namespace
-k create ns external-user
+kubectl create namespace external-user
 
 Create rolebinding
 
