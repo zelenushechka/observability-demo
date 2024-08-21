@@ -18,7 +18,7 @@
 
 ## Prerequisites
 
-Before you begin, ensure you have the following tools installed: *Docker*, *Helm*, and *KubeCTL*. Additionally, create a trial account on [Datadog](https://www.datadoghq.com/). This trial is valid for **14 days**.
+Before you begin, ensure you have the following tools installed: *Docker*, *Helm*, and *KubeCTL*. Additionally, create a trial account on [Datadog](https://www.datadoghq.com/). This trial is valid for **14** days.
 
 ## Step 1: Create an EKS Cluster
 
