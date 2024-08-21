@@ -12,13 +12,13 @@
 - [Step 6: Verify Deployment](#step-6-verify-deployment)
 - [Step 7: Create a Test Pod to Load CPU](#step-7-create-a-test-pod-to-load-cpu)
 - [Role-Based Access Control](#role-based-access-control)
-   - [Step 1: Create a Namespace for External Users](#step-1-create-a-namespace-for-external-users)
-   - [Step 2: Set Up Role and RoleBinding for External Users](#step-2-set-up-role-and-rolebinding-for-external-users)
-   - [Step 3: Test Role and RoleBinding](#step-3-test-role-and-rolebinding)
+  - [Step 1: Create a Namespace for External Users](#step-1-create-a-namespace-for-external-users)
+  - [Step 2: Set Up Role and RoleBinding for External Users](#step-2-set-up-role-and-rolebinding-for-external-users)
+  - [Step 3: Test Role and RoleBinding](#step-3-test-role-and-rolebinding)
 
 ## Prerequisites
 
-Before you begin, ensure you have the following tools installed: *Docker*, *Helm*, and *Kubectl*. Additionally, create a trial account on [Datadog](https://www.datadoghq.com/). This trial is valid for **14 days**.
+Before you begin, ensure you have the following tools installed: *Docker*, *Helm*, and *KubeCTL*. Additionally, create a trial account on [Datadog](https://www.datadoghq.com/). This trial is valid for **14 days**.
 
 ## Step 1: Create an EKS Cluster
 
@@ -31,15 +31,20 @@ Log in to your EKS cluster using the AWS CLI:
 
 `aws eks --profile your_aws_profile --region your_region update-kubeconfig --name your_cluster_name`
 
-> **Note:** Replace `your_aws_profile`, `your_region`, and `your_cluster_name` with your actual AWS profile, region, and cluster name.
+  **Note:** Replace `your_aws_profile`, `your_region`, and `your_cluster_name` with your actual AWS profile, region, and cluster name.
 
 ## Step 3: Install Datadog Operator using Helm
 
 Add the Datadog Helm repository and install the Datadog Operator:
 
-```helm repo add datadog https://helm.datadoghq.com```
+```bash
+helm repo add datadog https://helm.datadoghq.com
+```
 
-```helm install datadog-operator datadog/datadog-operator```
+```bash
+helm install datadog-operator datadog/datadog-operator
+```
+
 This will deploy the Datadog Operator, which is required to manage the Datadog agents across your Kubernetes cluster.
 
 ## Step 4: Configure Datadog API Key
@@ -48,7 +53,7 @@ Create a Kubernetes secret to store your Datadog API key:
 
 `kubectl create secret generic datadog-secret --from-literal api-key=your_datadog_api_key`
 
-> **Note:** Replace `your_datadog_api_key` with your actual Datadog API key.
+   **Note:** Replace `your_datadog_api_key` with your actual Datadog API key.
 
 This step secures your API key within Kubernetes, allowing the Datadog agent to authenticate with the Datadog service.
 
@@ -72,7 +77,10 @@ spec:
 
 Apply the configuration to deploy the Datadog Agent:
 
-```kubectl apply -f datadog-agent.yaml```
+```bash
+kubectl apply -f datadog-agent.yaml
+```
+
 This deployment enables Datadog to start monitoring your EKS cluster by collecting metrics, logs, and traces.
 
 ## Step 6: Verify Deployment
@@ -103,7 +111,9 @@ spec:
 
 Apply the configuration:
 
-`kubectl apply -f cpu-load-test.yaml`
+```bash
+kubectl apply -f cpu-load-test.yaml
+```
 
 This pod will continuously load the CPU, allowing you to check the corresponding metrics in the Datadog UI.
 
@@ -119,7 +129,9 @@ In this section, you'll set up Role-Based Access Control (RBAC) for external use
 
 Create a new namespace for external users:
 
-`kubectl create namespace external-user`
+```bash
+kubectl create namespace external-user
+```
 
 ## Step 2: Set Up Role and RoleBinding for External Users
 
@@ -159,18 +171,30 @@ rules:
 
 - Apply both Role and RoleBinding in one command:
 
-`kubectl apply -f role.yaml,rolebinding.yaml`
+```bash
+kubectl apply -f role.yaml,rolebinding.yaml
+```
 
 ## Step 3: Test Role and RoleBinding
 
 To test if the Role and RoleBinding are correctly set up, you can switch to user itself or use the kubectl auth can-i command:
 
-`kubectl auth can-i get pods --namespace=external-user --as=external-user`
+```bash
+kubectl auth can-i get pods --namespace=external-user --as=external-user
+```
+
 Should return "yes"
 
-`kubectl auth can-i get pods --namespace=default --as=external-user`
+```bash
+kubectl auth can-i get pods --namespace=default --as=external-user
+```
+
 Should return "no"
 
-`kubectl auth can-i get secret --namespace=external-user --as=external-user` Should return "no"
+```bash
+kubectl auth can-i get secret --namespace=external-user --as=external-user
+```
+
+Should return "no"
 
 If everything is set up correctly, the external user should only have access to manipulate pods in the external-user namespace.
